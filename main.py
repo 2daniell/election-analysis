@@ -4,18 +4,6 @@ import flet as ft
 
 dataFrame = pd.read_csv('data.csv',encoding='latin1', delimiter=';')
 
-
-#############
-### Dados ###
-#############
-
-def search(term: str, col: str) -> list:
-    results = []
-    for index, row in dataFrame.iterrows():
-        if isinstance(row[col], str) and row[col].strip().lower() == term.strip().lower():
-                results.append(row)
-    return results
-
 ############
 ### Tela ###
 ############
