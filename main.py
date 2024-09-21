@@ -1,11 +1,9 @@
-from re import search
-
 import pandas as pd
 import flet as ft
 
 from jinja2 import Environment, FileSystemLoader
 
-initial_results_amount = 100;
+initial_results_amount = 100
 
 environment = Environment(loader=FileSystemLoader('template'))
 template = environment.get_template('template.html')
@@ -16,19 +14,31 @@ dataFrame = pd.read_csv(
     delimiter=';')
 
 def filter_nm_candidato(nm_candidato):
-    results = dataFrame[dataFrame["NM_CANDIDATO"] == nm_candidato]
+    results = dataFrame[dataFrame["NM_CANDIDATO"].str.contains(nm_candidato, case=False, na=False)]
+    return results[['NR_CANDIDATO', 'NM_CANDIDATO', 'NM_URNA_CANDIDATO', "DS_CARGO", "NM_UE", 'NM_PARTIDO', 'SG_PARTIDO', 'SQ_CANDIDATO']]
+
+def filter_nm_urna_candidato(nm_urna_candidato):
+    results = dataFrame[dataFrame["NM_URNA_CANDIDATO"].str.contains(nm_urna_candidato, case=False, na=False)]
     return results[['NR_CANDIDATO', 'NM_CANDIDATO', 'NM_URNA_CANDIDATO', "DS_CARGO", "NM_UE", 'NM_PARTIDO', 'SG_PARTIDO', 'SQ_CANDIDATO']]
 
 def filter_ds_cargo(ds_cargo):
-    results = dataFrame[dataFrame["DS_CARGO"] == ds_cargo]
+    results = dataFrame[dataFrame["DS_CARGO"].str.contains(ds_cargo, case=False, na=False)]
     return results[["NR_CANDIDATO", "NM_CANDIDATO", "NM_URNA_CANDIDATO", "DS_CARGO", "NM_UE", "NM_PARTIDO", "SG_PARTIDO", "SQ_CANDIDATO"]]
 
 def filter_sg_partido(sg_partido):
     results = dataFrame[dataFrame["SG_PARTIDO"] == sg_partido]
     return results[["NR_CANDIDATO", "NM_CANDIDATO", "NM_URNA_CANDIDATO", "DS_CARGO", "NM_UE", "NM_PARTIDO", "SG_PARTIDO", "SQ_CANDIDATO"]]
 
+def filter_nm_partido(nm_partido):
+    results = dataFrame[dataFrame["NM_PARTIDO"].str.contains(nm_partido, case=False, na=False)]
+    return results[["NR_CANDIDATO", "NM_CANDIDATO", "NM_URNA_CANDIDATO", "DS_CARGO", "NM_UE", "NM_PARTIDO", "SG_PARTIDO", "SQ_CANDIDATO"]]
+
+def filter_nr_candidato(nr_candidato):
+    results = dataFrame[dataFrame["NR_CANDIDATO"] == nr_candidato]
+    return results[["NR_CANDIDATO", "NM_CANDIDATO", "NM_URNA_CANDIDATO", "DS_CARGO", "NM_UE", "NM_PARTIDO", "SG_PARTIDO", "SQ_CANDIDATO"]]
+
 def filter_nm_ue(nm_ue):
-    results = dataFrame[dataFrame["NM_UE"] == nm_ue]
+    results = dataFrame[dataFrame["NM_UE"].str.contains(nm_ue, case=False, na=False)]
     return results[["NR_CANDIDATO", "NM_CANDIDATO", "NM_URNA_CANDIDATO", "DS_CARGO", "NM_UE", "NM_PARTIDO", "SG_PARTIDO", "SQ_CANDIDATO"]]
 
 def results_initial(number):
@@ -77,8 +87,104 @@ def filter_screen(page: ft.Page):
         alignment=ft.MainAxisAlignment.CENTER
     )
 
-    def filter(e):
-        results_list = []
+    def show_results(results):
+        if not (results.empty):
+            results_listview.controls = format_results(results.iterrows())
+            page.update()
+        else:
+            results_listview.controls = [ft.ListTile(title=ft.Text("Nada encontrado na busca.", weight=ft.FontWeight.BOLD,
+                                                color=ft.colors.ERROR, text_align=ft.TextAlign.CENTER))]
+        page.update()
+
+    def filter():
+        page.update()
+
+        parameter = drop_down.value
+        typed = text_field.value
+
+        if parameter == "Numero do Candidato":
+            try:
+                typed = int(typed)
+                results_list = filter_nr_candidato(typed)
+                show_results(results_list)
+            except ValueError:
+                results_listview.controls = [
+                    ft.Text("O valor inserido deve ser um numero inteiro.",
+                            weight=ft.FontWeight.BOLD,
+                            text_align=ft.TextAlign.CENTER,
+                            color=ft.colors.ERROR)
+                ]
+                page.update()
+
+        elif (parameter == "Nome do Candidato"):
+            if not (typed):
+                results_listview.controls = [ft.Text("Não foi possivel realizar buscar", weight=ft.FontWeight.BOLD,
+                                text_align=ft.TextAlign.CENTER,
+                                color=ft.colors.ERROR)]
+                page.update()
+            else:
+                results_list = filter_nm_candidato(typed.strip().upper())
+                show_results(results_list)
+
+        elif (parameter == "Nome do Partido"):
+            if not (typed):
+                results_listview.controls = [ft.Text("Não foi possivel realizar buscar", weight=ft.FontWeight.BOLD,
+                                text_align=ft.TextAlign.CENTER,
+                                color=ft.colors.ERROR)]
+                page.update()
+            else:
+                results_list = filter_nm_partido(typed.strip().upper())
+                show_results(results_list)
+
+        elif (parameter == "Sigla do Partido"):
+            typed = typed.upper()
+            if not (typed):
+                results_listview.controls = [ft.Text("Não foi possivel realizar buscar", weight=ft.FontWeight.BOLD,
+                                                     text_align=ft.TextAlign.CENTER,
+                                                     color=ft.colors.ERROR)]
+                page.update()
+            else:
+                results_list = filter_sg_partido(typed.strip().upper())
+                show_results(results_list)
+
+        elif (parameter == "Municipio"):
+            if not (typed):
+                results_listview.controls = [ft.Text("Não foi possivel realizar buscar", weight=ft.FontWeight.BOLD,
+                                                     text_align=ft.TextAlign.CENTER,
+                                                     color=ft.colors.ERROR)]
+                page.update()
+            else:
+                results_list = filter_nm_ue(typed.strip().upper())
+                show_results(results_list)
+
+        elif (parameter == "Cargo"):
+            if not (typed):
+                results_listview.controls = [ft.Text("Não foi possivel realizar buscar", weight=ft.FontWeight.BOLD,
+                                                     text_align=ft.TextAlign.CENTER,
+                                                     color=ft.colors.ERROR)]
+                page.update()
+            else:
+                results_list = filter_ds_cargo(typed.strip().upper())
+                show_results(results_list)
+        else:
+            if not (typed):
+                results_listview.controls = [ft.Text("Não foi possivel realizar buscar", weight=ft.FontWeight.BOLD,
+                                                     text_align=ft.TextAlign.CENTER,
+                                                     color=ft.colors.ERROR)]
+                page.update()
+            else:
+                results_list = filter_nm_urna_candidato(typed.strip().upper())
+                show_results(results_list)
+
+    def is_valid():
+        if (drop_down.value):
+            filter()
+        else:
+            results_listview.controls = [ft.Text("Não foi possivel realizar buscar", weight=ft.FontWeight.BOLD,
+                                                 text_align=ft.TextAlign.CENTER,
+                                                 color=ft.colors.ERROR)]
+            page.update()
+
 
     def format_results(iterrows):
         results = []
@@ -142,7 +248,8 @@ def filter_screen(page: ft.Page):
             results.append(card)
         return results
 
-    search_button = ft.ElevatedButton("Buscar", width=300, height=60)
+    search_button = ft.ElevatedButton("Buscar", width=300, height=60,
+                                      on_click=lambda _:is_valid())
 
     results_listview = ft.ListView(
         controls=format_results(results_initial(initial_results_amount).iterrows()),
@@ -151,6 +258,7 @@ def filter_screen(page: ft.Page):
         height=300,
         auto_scroll=False
     )
+
 
     main_container = ft.Column(
         controls=[
