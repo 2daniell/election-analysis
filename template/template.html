@@ -1,11 +1,117 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Currículo do Candidato</title>
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 0 10px #0000001a;
+            max-width: 600px;
+            margin: auto;
+        }
+        
+        .info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .margin {
+            margin-bottom: 20px;
+        }
+
+        .margin-top {
+            margin-top: 20px;
+        }
+
+        .padding {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .space {
+            margin-top: 10px
+        }
+
+    </style>
 </head>
 <body>
-    
+    <div class="container">
+        <h1 style="text-align: center;">Dados do Candidato</h1>
+
+        {% for candidato in candidatos %}
+            <div class="info">
+
+                <hr>
+
+                <img src="{{ url_img }}" alt="" style="width: 100px; height: 133px; object-fit: cover; margin-bottom: 50px; margin-top: 20px;">
+
+
+                <strong>Número do Candidato:</strong> 
+                <p class="margin">{{ candidato.NR_CANDIDATO }}</p>
+
+                <strong>Nome:</strong> 
+                <p class="margin">{{ candidato.NM_CANDIDATO }}</p>
+
+                <strong>Nome na Urna:</strong>
+                <p class="margin">{{ candidato.NM_URNA_CANDIDATO }}</p>
+
+                <strong>Descrição do Cargo:</strong>
+                <p class="margin">{{ candidato.DS_CARGO }}</p>
+
+                <strong>Unidade Eleitoral:</strong>
+                <p class="margin">{{ candidato.NM_UE }}</p>
+
+                <strong>Partido:</strong> 
+                <p class="margin">{{ candidato.NM_PARTIDO }} - ({{ candidato.SG_PARTIDO }})</p>
+            </div>
+        {% endfor %}
+
+        
+            <div class="redes">        
+
+                <h2 style="text-align: center;" class="margin margin-top">Links Redes Sociais</h2>
+
+                <hr>
+
+                
+                <ul class="padding margin-top">
+                    {% if redes %}
+                        {% for rede in redes %}
+                            {% if rede.DS_URL %}
+                                <li class="space"><a href="{{ rede.DS_URL }}" target="_blank">{{ rede.DS_URL }}</a></li>
+                            {% else %}
+                                <li><p>Candidato sem Redes Sociais Cadastradas.</p></li>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <li><p>Candidato sem Redes Sociais Cadastradas.</p></li>
+                    {% endif %}
+                </ul>
+                
+                <h2 style="text-align: center;" class="margin-top margin">Bens</h2>
+
+                <hr class="margin">
+
+                <strong class="margin">Valor total de bens:</strong>
+                <p class="margin">{{ bens }}</p>
+        
+            </div>
+    </div>
+
 </body>
 </html>

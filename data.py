@@ -1,3 +1,5 @@
+from idlelib.iomenu import encoding
+
 import pandas as pd
 
 dataFrame = pd.read_csv(
@@ -33,5 +35,33 @@ def filter_nm_ue(nm_ue):
     results = dataFrame[dataFrame["NM_UE"].str.contains(nm_ue, case=False, na=False)]
     return results[["NR_CANDIDATO", "NM_CANDIDATO", "NM_URNA_CANDIDATO", "DS_CARGO", "NM_UE", "NM_PARTIDO", "SG_PARTIDO", "SQ_CANDIDATO"]]
 
+def filter_sq_candidato(sq_candidato):
+    results = dataFrame[dataFrame["SQ_CANDIDATO"] == sq_candidato]
+    return results[["NR_CANDIDATO", "NM_CANDIDATO", "NM_URNA_CANDIDATO", "DS_CARGO", "NM_UE", "NM_PARTIDO", "SG_PARTIDO", "SQ_CANDIDATO"]]
+
 def results_initial(number):
     return dataFrame.head(number)[["NR_CANDIDATO", "NM_CANDIDATO", "NM_URNA_CANDIDATO", "DS_CARGO", "NM_UE", "NM_PARTIDO", "SG_PARTIDO", "SQ_CANDIDATO"]]
+
+redesFrame = pd.read_csv('database/redes.csv',
+                         encoding='latin1',
+                         delimiter=';')
+
+def filter_media_sq_candidato(sq_candidato):
+    results = redesFrame[redesFrame["SQ_CANDIDATO"] == sq_candidato]
+    return results[['DS_URL']]
+
+bensFrame = pd.read_csv('database/bens.csv',
+                        encoding='latin1',
+                        delimiter=';')
+
+
+def find_bens_value(sq_candidato):
+    result = bensFrame[bensFrame['SQ_CANDIDATO'] == sq_candidato]
+
+    if (result.empty):
+        return 0.0
+
+    result['VR_BEM_CANDIDATO'] = result['VR_BEM_CANDIDATO'].str.replace(',', '.')
+    total = result['VR_BEM_CANDIDATO'].astype(float).sum()
+
+    return float(total)
