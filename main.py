@@ -2,6 +2,8 @@ import screen
 import html_server as server
 from threading import Thread
 
+port = 5000
+
 def main_screen(page: screen.ft.Page):
     page.title = "APE - Analise de Dados"
     page.window.center()
@@ -16,7 +18,7 @@ def main_screen(page: screen.ft.Page):
     screen.main_screen(page)
 
 def main_server():
-    server.app.run()
+    server.app.run(port=port)
 
 if __name__ == "__main__":
     server_thread = Thread(target=main_server)

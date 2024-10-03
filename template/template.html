@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Currículo do Candidato</title>
+    <title>Dados do Candidato</title>
     <style>
 
         * {
@@ -51,12 +51,13 @@
 </head>
 <body>
     <div class="container">
-        <h1 style="text-align: center;">Dados do Candidato</h1>
+        <h1 style="text-align: center;" class="margin">Dados do Candidato</h1>
 
-        {% for candidato in candidatos %}
+            <hr>
+        
             <div class="info">
-
-                <hr>
+                {% for candidato in candidatos %}
+                
 
                 <img src="{{ url_img }}" alt="" style="width: 100px; height: 133px; object-fit: cover; margin-bottom: 50px; margin-top: 20px;">
 
@@ -78,8 +79,9 @@
 
                 <strong>Partido:</strong> 
                 <p class="margin">{{ candidato.NM_PARTIDO }} - ({{ candidato.SG_PARTIDO }})</p>
+                {% endfor %}
             </div>
-        {% endfor %}
+        
 
         
             <div class="redes">        

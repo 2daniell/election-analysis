@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estatisticas</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 0 10px #0000001a;
+            max-width: 600px;
+            margin: auto;
+        }
+
+    </style>
+
+</head>
+<body>
+    
+    <div class="container">
+        <h1 style="text-align: center;" class="margin">Quantidade Por Faixa Etaria</h1>
+
+        <hr style="margin-bottom: 20px;">
+
+
+        {% for statistic in statistics %}
+
+        <span style="font-weight: 600;">{{ statistic.cargo }}</span>
+
+        <ul style="list-style: none; margin: 10px 0px">
+
+                <li style="display: flex; justify-content: space-between;">
+                    <span style="font-weight: 500;">Até 21 anos</span>
+                    <p>{{ statistic.idd_faixas.faixa_21 }}</p>
+                </li>
+                
+                <li style="display: flex; justify-content: space-between;">
+                    <span style="font-weight: 500;">Entre 22 e 40 anos</span>
+                    <p>{{ statistic.idd_faixas.faixa_22_40 }}</p>
+                </li>
+                
+                <li style="display: flex; justify-content: space-between;">
+                    <span style="font-weight: 500;">Entre 41 e 60 anos</span>
+                    <p>{{ statistic.idd_faixas.faixa_41_60 }}</p>
+                </li>
+                
+                <li style="display: flex; justify-content: space-between;">
+                    <span style="font-weight: 500; margin-bottom: 10px">Acima de 60 anos</span>
+                    <p>{{ statistic.idd_faixas.faixa_60 }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <h2 style="text-align: center; margin-bottom: 10px">Candidatos Por Cargo e Gênero</h2>
+
+        <hr style="margin-bottom: 10px;">
+
+
+        {% for statistic in statistics %}
+
+        <span style="font-weight: 600;">{{ statistic.cargo }}</span>
+
+        <ul style="list-style: none; margin: 10px 0px">
+            <li style="display: flex; justify-content: space-between;">
+                <span style="font-weight: 500;">Masculino</span>
+                <p>{{ statistic.porcent_masc }}%</p>
+            </li>
+
+            <li style="display: flex; justify-content: space-between;">
+                <span style="font-weight: 500;">Feminino</span>
+                <p style="margin-bottom: 10px;">{{ statistic.porcent_fem }}%</p>
+            </li>
+                    
+            {%endfor%}
+        </ul>
+
+        <h2 style="margin-bottom: 10px; text-align: center;">Grau de Instrução Por Cargo</h2>
+        <hr style="margin-bottom: 10px;">
+
+        {% for statistic in statistics %}
+        
+        <span style="font-weight: 600;">{{ statistic.cargo }}</span>
+
+        <ul style="list-style: none; margin: 10px 0px">
+
+            {% for grau, porcent in statistic.porcent_instrucao.items() %}
+                <li style="display: flex; justify-content: space-between;">
+                    <span style="font-weight: 500;">{{grau}}:</span>
+                    <p>{{porcent}}%</p>
+                </li>
+            {%endfor%}
+        
+
+        </ul>
+        {%endfor%}
+
+        <h2 style="text-align: center; margin-bottom: 10px;">Porcentagem por Cargo e Estado Civil</h2>
+
+        <hr style="margin-bottom: 10px;">
+
+        {% for statistic in statistics %}
+        
+        <span style="font-weight: 600">{{ statistic.cargo }}</span>
+
+        <ul style="list-style: none; margin: 10px 0px">
+
+            {% for estado, porcent in statistic.porcentagem_estado_civil.items() %}
+                <li style="display: flex; justify-content: space-between;">
+                    <span style="font-weight: 500;">{{estado}}:</span>
+                    <p>{{porcent}}%</p>
+                </li>
+            {%endfor%}
+        
+
+        </ul>
+        {%endfor%}
+
+        <h2 style="text-align: center; margin-bottom: 10px;">Partidos Com Candidato A Prefeito</h2>
+
+        <hr style="margin-bottom: 10px;">
+
+        <ul style="list-style: none; display: flex; flex-wrap: wrap; justify-content: center;">
+        {% for partido in partidos %}
+            <li style="border: 1px solid #ccc; border-radius: 8px; padding: 10px; margin: 10px; width: 150px; text-align: center; transition: transform 0.2s;">
+                <strong>{{ partido }}</strong>
+            </li>
+        {% endfor %}
+        </ul>
+
+    </div>
+
+</body>
+</html>
