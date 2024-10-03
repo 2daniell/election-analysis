@@ -1,6 +1,7 @@
 import data
 import flet as ft
 import html_server as server
+from main import port
 
 initial_results_amount = 100
 
@@ -14,7 +15,7 @@ def main_screen(page: ft.Page):
     mnc_button = ft.ElevatedButton("Municipios", width=500, height=70, color=ft.colors.WHITE, on_click=lambda _:municipio_screen(page))
 
     stc_button = ft.ElevatedButton("Estatisticas", width=500, height=70, color=ft.colors.WHITE,
-                                   on_click=lambda _:statistics_screen(page))
+                                   on_click=lambda _:alert_confirm())
 
     main_colum = ft.Column(controls=[title, ft.Column(
         controls=[button, mnc_button, stc_button],
@@ -24,10 +25,28 @@ def main_screen(page: ft.Page):
                            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                            alignment=ft.MainAxisAlignment.CENTER)
 
+    def alert_confirm():
+
+        def handle_accept(e):
+            server.open_browser_url("http://127.0.0.1:" + str(port) + "/statistics")
+            page.close(dlg)
+
+        def handle_close(e):
+            page.close(dlg)
+
+        dlg = ft.AlertDialog(
+            modal=True,
+            title=ft.Text("Deseja acessar pagina html?"),
+            actions = [
+                ft.TextButton("Sim", on_click=handle_accept),
+                ft.TextButton("Não", on_click=handle_close),
+            ],
+            actions_alignment=ft.MainAxisAlignment.CENTER
+        )
+
+        page.open(dlg)
+
     page.add(main_colum)
-
-def statistics_screen(page: ft.Page):
-
 
 def municipio_screen(page: ft.Page):
     page.clean()
@@ -42,11 +61,33 @@ def municipio_screen(page: ft.Page):
         alignment=ft.MainAxisAlignment.CENTER
     )
 
+    def alert_confirm(code):
+
+        def handle_accept(e):
+            server.open_browser_url("http://127.0.0.1:" + str(port) + "/municipio/" + code)
+            page.close(dlg)
+
+        def handle_close(e):
+            page.close(dlg)
+
+        dlg = ft.AlertDialog(
+            modal=True,
+            title=ft.Text("Deseja acessar pagina html?"),
+            actions = [
+                ft.TextButton("Sim", on_click=handle_accept),
+                ft.TextButton("Não", on_click=handle_close),
+            ],
+            actions_alignment=ft.MainAxisAlignment.CENTER
+        )
+
+        page.open(dlg)
+
     def format_results(iterrows):
         results = []
         for _, row in iterrows:
             card = ft.Card(
                 content=ft.Container(
+                    on_click= lambda _: alert_confirm(int(row['SQ_UE'])),
                     content=ft.Column([
 
                         ft.ListTile(
@@ -86,6 +127,7 @@ def municipio_screen(page: ft.Page):
 
 def filter_screen(page: ft.Page):
     page.clean()
+
 
     title = ft.Text("Filtro", theme_style=ft.TextThemeStyle.DISPLAY_LARGE, text_align=ft.TextAlign.CENTER)
     text_field = ft.TextField(label="Consulta", width=400, height=60)

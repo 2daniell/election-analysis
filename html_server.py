@@ -17,6 +17,14 @@ def index(id):
 def statistics():
     return render_template("statistics.html", statistics=data.get_statistics(), partidos=data.get_partidos_prefeito())
 
+@app.route('/municipio/<int:id>')
+def municipio():
+    return "OI"
+
+
 def open_browser(id):
     url = "http://127.0.0.1:" + str(port) + "/candidatos/" + str(id)
+    webbrowser.open(url, new=True)
+
+def open_browser_url(url):
     webbrowser.open(url, new=True)

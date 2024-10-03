@@ -43,8 +43,10 @@ def filter_sq_candidato(sq_candidato):
 def results_initial(number):
     return dataFrame.head(number)[["NR_CANDIDATO", "NM_CANDIDATO", "NM_URNA_CANDIDATO", "DS_CARGO", "NM_UE", "NM_PARTIDO", "SG_PARTIDO", "SQ_CANDIDATO"]]
 
+#Procurar SQ_UE
 def municipio_results():
-    return dataFrame[["NM_UE"]].drop_duplicates()
+    return dataFrame[["NM_UE", "SQ_UE"]].drop_duplicates().reset_index(drop=True)
+
 
 redesFrame = pd.read_csv('database/redes.csv',
                          encoding='latin1',

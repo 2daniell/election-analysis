@@ -14,7 +14,6 @@ def main_screen(page: screen.ft.Page):
     page.window.height = 650
     page.window.maximizable = False
     page.window.resizable = False
-
     screen.main_screen(page)
 
 def main_server():
